@@ -1,3 +1,10 @@
+*.aux
+*.log
+
+*_files/
+*_cache/
+/beamerthemeMonash.sty
+
 .Rproj.user
 .Rhistory
 .RData

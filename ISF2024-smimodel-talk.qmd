@@ -1,0 +1,106 @@
+---
+title: "Sparse Multiple Index (SMI) Models for High-dimensional Nonparametric Forecasting"
+author: Nuwani Palihawadana
+date: 01 July 2024
+titlegraphic: bg-13.png
+titlecolor: white
+toc: true
+format:
+  presentation-beamer:
+    pdf-engine: xelatex
+    template-partials:
+        - before-title.tex
+execute:
+  cache: true
+  echo: true
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: load-packages
+#| echo: false
+library(knitr)
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(tsibble)
+library(lubridate)
+library(cowplot)
+```
+
+# Motivation
+
+## Electricity Demand Data
+```{r, echo=FALSE, message=FALSE}
+#| echo: false
+#| message: false
+
+demand_data <- tsibbledata::vic_elec %>%
+  mutate(
+    Half_hour = hms(format(Time, "%H:%M:%S"))
+  ) %>%
+  as_tsibble(index = Time, key = Half_hour)
+
+p1 <- demand_data %>%
+  ggplot(aes(x=Time, y=Demand)) +
+  geom_line(color = "#D55E00") +
+  xlab("Time")+
+  ylab("Demand (MW)") +
+  ggtitle("Half-hourly Electricity Demand - Victoria") +
+  theme(
+    plot.title = element_text(size = 10),
+    ) +
+  scale_x_datetime(date_breaks = "1 year") +
+  ylim(3000, 8000)
+
+dd <- tsibbledata::vic_elec %>%
+  filter(Time <= "2012-01-31")
+
+p2 <- dd %>%
+  ggplot(aes(x=Time, y=Demand)) +
+  geom_line(color = "#D55E00") +
+  xlab("Date in January")+
+  ylab("Demand (MW)") +
+  ggtitle("Half-hourly Electricity Demand - Victoria - January 2012") +
+  theme(
+    plot.title = element_text(size = 10),
+    ) +
+  scale_x_datetime(date_breaks = "2 days", date_labels = "%d") +
+  ylim(3000, 8000)
+
+plot_grid(p1, p2, nrow=1)
+```
+
+
+## Electricity Demand Data
+\placefig{1.8}{1.2}{width=14cm, height=7cm}{figs/elec_temp.pdf}
+
+## Background
+\begin{itemize}
+  \item \color{violet} \textbf{\textsl{Nonlinear "Transfer Function" model}}
+\end{itemize}
+<!-- \begin{block}{} -->
+<!--   \centerline{$y_{t} = f(\bm{x}_{t}, \bm{x}_{t-1}, \dots,\bm{x}_{t-p}, y_{1},\dots,y_{t-k}) + \varepsilon_{t}$} -->
+<!-- \end{block} -->
+
+$y_{t}$ -- variable to forecast
+
+$\mathbfit{x}_{t}$ -- a vector of predictors
+
+$\varepsilon_{t}$ -- random error
+
+\pause
+When we consider
+\begin{block}{}
+  \centerline{$f(\mathbfit{x}_{t}, \mathbfit{x}_{t-1}, \dots,\mathbfit{x}_{t-p})$}
+\end{block}
+\pause
+\begin{itemize}
+  \item Impossible to estimate $f$ for large $p$ -- \textbf{\textit{curse of dimensionality}}
+  \pause
+  \item Reasonable to impose additivity constraints \\[0.2cm]
+\end{itemize}
+<!-- \begin{block}{} -->
+<!--   \centerline{$f(\bm{x}_{t}, \bm{x}_{t-1}, \dots,\bm{x}_{t-p}) = \sum_{i=0}^{p} {f_{i}(\bm{x}_{t-i})}$ \pause \color{violet} \textbf{\textsl{$\bm{\leftarrow}$ Nonparametric Additive Model}}} -->
+<!-- \end{block} -->
