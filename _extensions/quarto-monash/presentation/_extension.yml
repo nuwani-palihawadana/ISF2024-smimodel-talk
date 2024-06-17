@@ -12,7 +12,7 @@ contributes:
       show-slide-number: all
     beamer:
       aspectratio: 169
-      fontsize: 14pt
+      fontsize: 12pt
       section-titles: false
       pdf-engine: pdflatex
       fig-width: 9
