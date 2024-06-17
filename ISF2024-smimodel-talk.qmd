@@ -76,31 +76,172 @@ plot_grid(p1, p2, nrow=1)
 ## Electricity Demand Data
 \placefig{1.8}{1.2}{width=14cm, height=7cm}{figs/elec_temp.pdf}
 
+# Background
+
 ## Background
+
 \begin{itemize}
   \item \color{violet} \textbf{\textsl{Nonlinear "Transfer Function" model}}
 \end{itemize}
-<!-- \begin{block}{} -->
-<!--   \centerline{$y_{t} = f(\bm{x}_{t}, \bm{x}_{t-1}, \dots,\bm{x}_{t-p}, y_{1},\dots,y_{t-k}) + \varepsilon_{t}$} -->
-<!-- \end{block} -->
+\begin{block}{}
+  \centerline{$y_{t} = f(\mathbfit{x}_{t}, \mathbfit{x}_{t-1}, \dots,\mathbfit{x}_{t-p}, y_{1},\dots,y_{t-k}) + \varepsilon_{t}$}
+\end{block}
 
-$y_{t}$ -- variable to forecast
-
-$\mathbfit{x}_{t}$ -- a vector of predictors
-
+$y_{t}$ -- variable to forecast \newline
+$\mathbfit{x}_{t}$ -- a vector of predictors \newline
 $\varepsilon_{t}$ -- random error
 
-\pause
-When we consider
-\begin{block}{}
-  \centerline{$f(\mathbfit{x}_{t}, \mathbfit{x}_{t-1}, \dots,\mathbfit{x}_{t-p})$}
-\end{block}
 \pause
 \begin{itemize}
   \item Impossible to estimate $f$ for large $p$ -- \textbf{\textit{curse of dimensionality}}
   \pause
   \item Reasonable to impose additivity constraints \\[0.2cm]
 \end{itemize}
-<!-- \begin{block}{} -->
-<!--   \centerline{$f(\bm{x}_{t}, \bm{x}_{t-1}, \dots,\bm{x}_{t-p}) = \sum_{i=0}^{p} {f_{i}(\bm{x}_{t-i})}$ \pause \color{violet} \textbf{\textsl{$\bm{\leftarrow}$ Nonparametric Additive Model}}} -->
-<!-- \end{block} -->
+\begin{block}{}
+  \centerline{$f(\mathbfit{x}_{t}, \mathbfit{x}_{t-1}, \dots,\mathbfit{x}_{t-p}) = \sum_{i=0}^{p} {f_{i}(\mathbfit{x}_{t-i})}$ \pause \color{violet} \textbf{\textsl{$\mathbfit{\leftarrow}$ Nonparametric Additive Model}}}
+\end{block}
+
+## Background
+
+### Issues
+\begin{enumerate}
+  \item \textbf{Challenging to estimate in a high-dimensional setting} \newline
+  \item \textbf{Subjectivity in predictor selection, and predictor grouping to model interactions} \newline
+\end{enumerate}
+
+\pause
+
+### Index Models
+\begin{itemize}
+    \item \color{violet} \textbf{Mitigate difficulty of estimating a nonparametric component for each predictor}
+    \item \color{violet} \textbf{Improve flexibility}\newline
+\end{itemize}
+
+
+# Sparse Multiple Index (SMI) Model
+
+## SMI Model
+
+\begin{block}{Semi-parametric model}
+$$y_{i} = \beta_{0} + \sum_{j = 1}^{p}g_{j}(\mathbfit{\alpha}_{j}^{T}\mathbfit{x}_{ij}) + \sum_{k = 1}^{d}f_{k}(w_{ik}) + \mathbfit{\theta}^{T}\mathbfit{u}_{i} + \varepsilon_{i}, \quad i = 1, \dots, n,$$
+\end{block}
+
+\begin{itemize}
+  \item \color{black} $y_{i}$ : \color{violet} univariate response
+  \item \color{black} $\mathbfit{x}_{ij} \in \mathbb{R}^{\ell_{j}}$, $j = 1, \dots, p$ : \color{violet} $p$ subsets of predictors entering indices
+  \item \color{black} $\mathbfit{\alpha}_{j}$ : \color{violet} $\ell_{j}$-dimensional vectors of index coefficients
+  \pause
+  \item \color{black} Additional predictors :
+    \begin{itemize}
+      \item $w_{ik}$  --   \color{violet} nonlinear 
+      \item \color{black} $\mathbfit{u}_{i}$  --   \color{violet} linear
+    \end{itemize}
+  \item \color{black} $g_{j}, f_{k}$ : \color{violet} smooth nonlinear functions
+\end{itemize}
+
+
+## Optimisation Problem
+
+\small Let \color{violet}\textbf{$q$} \color{black}be the \color{violet}\textit{total number of predictors} \color{black}entering indices.
+
+\begin{block}{}
+\begin{align*}
+  & \min_{\beta_{0}, p, \mathbfit{\alpha}, \mathbfit{g}, \mathbfit{f}, \mathbfit{\theta}} \quad \sum_{i = 1}^{n}\Bigg [ y_{i} - \beta_{0} - \sum_{j = 1}^{p}g_{j}(\mathbfit{\alpha}_{j}^{T}\mathbfit{x}_{i}) - \sum_{k = 1}^{d}f_{k}(w_{ik}) - \mathbfit{\theta}^{T}\mathbfit{u}_{i}\Bigg]^{2} \\
+  & \hspace*{5cm} + \color{blue}\lambda_{0}\sum_{j = 1}^{p}\sum_{m = 1}^{q}\mathbb{1}(\alpha_{jm} \neq 0) \color{black}+ \color{magenta}\lambda_{2}\sum_{j = 1}^{p}\|\mathbfit{\alpha}_{j}\|_2^2 \nonumber \\
+  & \hspace*{1.5cm} \text{s.t.}\quad \sum_{j=1}^p \mathbb{1}(\alpha_{jm} \neq 0) \in \{0,1\} \quad \forall m \nonumber
+\end{align*}
+\end{block}
+\pause
+\begin{itemize}
+  \item \color{blue}$\lambda_{0} > 0$ -- controls the number of selected predictors
+  \pause
+  \item \color{magenta}$\lambda_{2} \ge 0$ -- controls the strength of the additional shrinkage
+\end{itemize}
+
+
+## MIQP Formulation
+
+\begin{block}{}
+$$
+\begin{aligned}
+  \min_{\beta_{0}, p, \mathbfit{\alpha}, \mathbfit{g}, \mathbfit{f}, \mathbfit{\theta}, \mathbfit{z}} \quad & \sum_{i = 1}^{n}\Bigg [ y_{i} - \beta_{0} - \sum_{j = 1}^{p}{g_{j}(\mathbfit{\alpha}_{j}^{T}\mathbfit{x}_{i})} - \sum_{k = 1}^{d} {f_{k}(w_{ik})} - \mathbfit{\theta}^{T}\mathbfit{u}_{i}\Bigg ]^{2} \\
+  & \hspace*{4cm} + \color{blue}\lambda_{0}\sum_{j = 1}^{p}\sum_{m = 1}^{q}z_{jm} \color{black}+ \color{magenta}\lambda_{2}\sum_{j = 1}^{p}\sum_{m = 1}^{q} \alpha_{jm}^{2} \\
+  \text{s.t.} \quad & |\alpha_{jm}| \le Mz_{jm} \quad \forall j, \forall m, \\
+  & \sum_{j = 1}^{p}z_{jm} \le 1 \quad \forall m, \\
+  & z_{jm} \in \{0, 1\} \pause \color{red} \quad \mathbfit{\leftarrow} \quad z_{jm} = \mathbb{1}(\alpha_{jm} \neq 0)
+\end{aligned}
+$$
+\end{block}
+\pause
+\begin{itemize}
+  \item $M < \infty$: \small{If $\mathbfit{\alpha^{*}}$ is an optimal solution, then $\max \big ( \{|\alpha_{jm}^{*} |\}_{j\in[p],m\in[q]} \big) \le M$}
+\end{itemize}
+
+## Estimation Algorithm
+
+\begin{block}{\small Step 1: Initialising the Index Structure and Index Coefficients}
+\begin{itemize}
+    \item \color{violet}Obtain a feasible initialisation : \newline
+    \color{black}
+\pause
+  \begin{enumerate}
+    \item \textbf{PPR:} Projection Pursuit Regression Based Initialisation \newline
+    \pause
+    \item \textbf{Additive:} Nonparametric Additive Model Based Initialisation \newline
+    \pause
+    \item \textbf{Linear:} Linear Regression Based Initialisation \newline
+    \pause
+    \item \textbf{Multiple:} Picking One From Multiple Initialisations \newline
+  \end{enumerate}
+  \item \color{violet}Scale each $\hat{\mathbfit{\alpha}}_{j}$ to have unit norm
+\end{itemize}
+\end{block}
+
+
+## Estimation Algorithm
+
+\begin{block}{\small Step 2: Estimating Nonlinear Functions}
+  \begin{itemize}
+    \item \color{violet} Estimate a GAM :
+    \color{black}
+$$
+  y_{i} = \beta_{0} + \sum_{j = 1}^{p}g_{j}(\hat{h}_{ij}) + \sum_{k = 1}^{d}f_{k}(w_{ik}) + \mathbfit{\theta}^{T}\mathbfit{u}_{i} + \varepsilon_{i}, \quad i = 1, \dots, n,
+$$
+\color{violet}
+where 
+    \begin{itemize}
+      \item $y_{i}$ -- response \newline
+      \item $\hat{h}_{ij} = \hat{\mathbfit{\alpha}}_{j}^{T}\mathbfit{x}_{i}, j = 1, \dots, p$ -- estimated indices
+    \end{itemize}
+  \end{itemize}
+\end{block}
+
+
+## Estimation Algorithm
+
+\begin{block}{\small Step 3: Updating Index Coefficients}
+$$
+\begin{aligned}
+  \min_{\mathbfit{\alpha}^{\text{new}}, \mathbfit{z}^{\text{new}}} & (\mathbfit{\alpha}^{\text{new}} - \mathbfit{\alpha}^{\text{old}})^{T}\mathbfit{V}^{T}\mathbfit{V}(\mathbfit{\alpha}^{\text{new}} - \mathbfit{\alpha}^{\text{old}}) - 2(\mathbfit{\alpha}^{\text{new}} - \mathbfit{\alpha}^{\text{old}})^{T}\mathbfit{V}^{T}\mathbfit{r} \\
+  & \hspace*{4cm} + \color{blue} \lambda_{0}\sum_{j = 1}^{p}\sum_{m = 1}^{q}z_{jm}^{\text{new}} \color{black} + \color{magenta} \lambda_{2}\sum_{j = 1}^{p}\sum_{m = 1}^{q}(\alpha_{jm}^{new})^2 \\
+  \text{s.t. } & |\alpha_{jm}^{\text{new}}| \le Mz_{jm}^{\text{new}} \quad \forall j, \forall m,\\
+  & z_{jm}^{\text{new}} \in \{0, 1\}, \\
+  & \sum_{j = 1}^{p}z_{jm}^{\text{new}} \le 1 \quad \forall m,
+\end{aligned}
+$$
+    \begin{itemize}
+      \item \scriptsize $\mathbfit{V}$ -- matrix of partial derivatives of RHS of SMI model equation, with respect to $\mathbfit{\alpha}_{j}$
+      \item \scriptsize $\mathbfit{r}$ -- current residual vector
+    \end{itemize}
+\end{block}
+
+
+# Simulation Experiment
+
+# Empirical Applications
+
+## Forecasting Heat Exposure Related Mortality
+
+## Forecasting Solar Intensity
+
+# Conclusion
