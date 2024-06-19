@@ -27,12 +27,14 @@ library(tidyr)
 library(tsibble)
 library(lubridate)
 library(cowplot)
+library(kableExtra)
 ```
 
 # Motivation
 
 ## Electricity Demand Data
-```{r, echo=FALSE, message=FALSE}
+```{r}
+#| label: elec-plot
 #| echo: false
 #| message: false
 
@@ -179,7 +181,9 @@ $$
 
 ## Estimation Algorithm
 
-\begin{block}{\small Step 1: Initialising the Index Structure and Index Coefficients}
+\begin{block}{}
+\small \color{blue} \textbf{Step 1: Initialise Index Structure and Index Coefficients}
+\end{block}
 \begin{itemize}
     \item \color{violet}Obtain a feasible initialisation : \newline
     \color{black}
@@ -195,18 +199,21 @@ $$
   \end{enumerate}
   \item \color{violet}Scale each $\hat{\mathbfit{\alpha}}_{j}$ to have unit norm
 \end{itemize}
-\end{block}
 
 
 ## Estimation Algorithm
 
-\begin{block}{\small Step 2: Estimating Nonlinear Functions}
+\begin{block}
+\small \color{blue} \textbf{\small Step 2: Estimate Nonlinear Functions}
+\end{block}
   \begin{itemize}
     \item \color{violet} Estimate a GAM :
     \color{black}
+\begin{alertblock}{}
 $$
   y_{i} = \beta_{0} + \sum_{j = 1}^{p}g_{j}(\hat{h}_{ij}) + \sum_{k = 1}^{d}f_{k}(w_{ik}) + \mathbfit{\theta}^{T}\mathbfit{u}_{i} + \varepsilon_{i}, \quad i = 1, \dots, n,
 $$
+\end{alertblock}
 \color{violet}
 where 
     \begin{itemize}
@@ -214,12 +221,15 @@ where
       \item $\hat{h}_{ij} = \hat{\mathbfit{\alpha}}_{j}^{T}\mathbfit{x}_{i}, j = 1, \dots, p$ -- estimated indices
     \end{itemize}
   \end{itemize}
-\end{block}
 
 
 ## Estimation Algorithm
 
-\begin{block}{\small Step 3: Updating Index Coefficients}
+\begin{block}
+\small \color{blue} \textbf{Step 3: Update Index Coefficients}
+\end{block}
+\color{black}
+\begin{alertblock}{}
 $$
 \begin{aligned}
   \min_{\mathbfit{\alpha}^{\text{new}}, \mathbfit{z}^{\text{new}}} & (\mathbfit{\alpha}^{\text{new}} - \mathbfit{\alpha}^{\text{old}})^{T}\mathbfit{V}^{T}\mathbfit{V}(\mathbfit{\alpha}^{\text{new}} - \mathbfit{\alpha}^{\text{old}}) - 2(\mathbfit{\alpha}^{\text{new}} - \mathbfit{\alpha}^{\text{old}})^{T}\mathbfit{V}^{T}\mathbfit{r} \\
@@ -229,19 +239,262 @@ $$
   & \sum_{j = 1}^{p}z_{jm}^{\text{new}} \le 1 \quad \forall m,
 \end{aligned}
 $$
-    \begin{itemize}
-      \item \scriptsize $\mathbfit{V}$ -- matrix of partial derivatives of RHS of SMI model equation, with respect to $\mathbfit{\alpha}_{j}$
-      \item \scriptsize $\mathbfit{r}$ -- current residual vector
-    \end{itemize}
+\end{alertblock}
+
+\begin{textblock}{5.5}(9, 5.5)
+\fontsize{11}{12}\sf
+\begin{block}{}
+\scriptsize \color{violet} $\mathbfit{V}$ -- matrix of partial derivatives of RHS of SMI model equation, with respect to $\mathbfit{\alpha}_{j}$
 \end{block}
+\end{textblock} 
+
+\begin{textblock}{5.5}(9, 7)
+\fontsize{11}{12}\sf
+\begin{block}{}
+\scriptsize \color{violet} \scriptsize $\mathbfit{r}$ -- current residual vector
+\end{block}
+\end{textblock}
+
+
+## Estimation Algorithm
+
+\begin{block}
+\small \color{blue} \textbf{Step 4: Iterate steps 2 and 3}
+\end{block}
+\color{violet}
+Until:
+    \begin{itemize}
+      \item convergence
+      \item loss increases for three consecutive iterations \color{violet} or
+      \item \color{black} reaching maximum iterations
+    \end{itemize}
+\pause   
+\begin{block}
+\small \color{blue} \textbf{Step 5: Stop or repeat step 4}
+\end{block}
+  \begin{itemize}
+    \item No dropped predictors -- \alert{Stop}
+    \item Otherwise, include a new index consisting of dropped predictors -- \alert{Repeat step 4}
+  \end{itemize}
+
+
+## Estimation Algorithm
+
+\begin{block}
+\small \color{blue} \textbf{Step 6: Increase p by 1 in each iteration of step 5}
+\end{block}
+\color{violet}
+Until:
+    \begin{itemize}
+      \item number of indices reaches $q$ -- \alert{output = final fitted model}
+      \item loss increases after the increment -- \alert{output = previous iteration model} \color{violet} or \color{black}
+      \item solution maintains same number of indices as previous iteration, and absolute difference of index coefficients between two successive iterations is not larger than a pre-specified tolerance -- \alert{output = model with a smaller loss}
+    \end{itemize}
 
 
 # Simulation Experiment
 
+## Data Generation
+
+\begin{block}{Predictor variables}
+\begin{itemize}
+  \item $x_{0}$ -- Uniform [0,1]
+  \item $z_{0}$ -- Normal (5, 4)
+  \item Construct lagged series of both $x_{0}$ and $z_{0}$ up-to lag 5
+\end{itemize}
+\end{block}
+
+\pause
+\begin{block}{Response variables}
+  \begin{itemize}
+    \item Low noise level -- $N(\mu = 0, \sigma^2 = 0.01)$:
+      \begin{itemize}
+        \item $y_{1} = (0.9*x_{0} + 0.6*x_{1} + 0.45*x_{3})^3 + \epsilon, \quad \epsilon\sim N(0, 0.01)$
+        \item $y_{2} = (0.9*x_{0} + 0.6*x_{1} + 0.45*x_{3})^3 + (0.35*x_{2} + 0.7*x_{5})^2 + \epsilon, \quad \epsilon\sim N(0, 0.01)$
+      \end{itemize}  
+    \item High noise level -- $N(\mu = 0, \sigma^2 = 0.25)$:
+      \begin{itemize}
+        \item $y_{1} = (0.9*x_{0} + 0.6*x_{1} + 0.45*x_{3})^3 + \epsilon, \quad \epsilon\sim N(0, 0.25)$
+        \item $y_{2} = (0.9*x_{0} + 0.6*x_{1} + 0.45*x_{3})^3 + (0.35*x_{2} + 0.7*x_{5})^2 + \epsilon, \quad \epsilon\sim N(0, 0.25)$
+      \end{itemize}
+  \end{itemize}
+\end{block}
+
+
+## Experiment Setup
+
+\begin{itemize}
+  \item \color{violet} Three different sets of predictors:
+\begin{block}{}
+  \begin{enumerate}
+    \item \color{black} All $\mathbfit{x}$ variables \newline
+    \item All $\mathbfit{x}$ variables and all $\mathbfit{z}$ variables \newline
+  \item First three $\mathbfit{x}$ variables (i.e. $x_{0}, x_{1}$ and $x_{2}$) and all $\mathbfit{z}$ variables \newline
+  \end{enumerate}
+\end{block}
+  \item \color{violet} under each initialisation option
+  \item for each response and noise level combinations
+\end{itemize}
+
+## Results
+
+```{r}
+#| label: sim-table
+#| echo: false
+#| message: false
+results_sim <- readr::read_csv("results/simulation_table_final_modified.csv")
+results_sim <- results_sim[seq(1, NROW(results_sim), by = 2), ]
+kable(results_sim,
+  format = "latex",
+  booktabs = TRUE,
+  escape = FALSE,
+  linesep = c("", "", "\\addlinespace"),
+  col.names = c("True Model", "Predictors", "PPR", "Additive", "Linear", "Multiple")
+) |>
+  pack_rows(
+    index = c("Low noise level" = 6, "High noise level" = 6),
+    latex_gap_space = "0.6em"
+  ) |>
+  row_spec(row = 3, extra_latex_after = "[1.6em]") |>
+  row_spec(row = 9, extra_latex_after = "[1.6em]") |>
+  kable_styling(latex_options = c("repeat_header", "scale_down")) |>
+  row_spec(0, bold = TRUE)
+```
+
+      
 # Empirical Applications
 
 ## Forecasting Heat Exposure Related Mortality
 
+\begin{textblock}{7}(0.7, 1)
+\fontsize{11}{12}\sf
+\begin{block}{Variables}
+  \begin{itemize}
+    \item \color{teal} \textbf{Response:} \color{black} \textbf{Daily deaths} -- 1990 to 2014 -- Montreal, Canada
+    \item \color{teal} \textbf{Index Variables:} 
+      \begin{itemize}
+        \item \color{black} Death lags
+        \item \color{black} Max temperature lags
+        \item \color{black} Min temperature lags
+        \item \color{black} Vapor pressure lags
+      \end{itemize}
+    \item \color{teal}\textbf{Nonlinear:} \color{black} DOS, Year \newline
+  \end{itemize}
+\end{block}
+\end{textblock}
+
+\begin{textblock}{7}(8.3, 1)
+\fontsize{11}{12}\sf
+\begin{block}{Data Split}
+  \begin{itemize}
+  \item \color{teal}\textbf{Training Set:} \color{black}1990 to 2012 \newline
+  \item \color{teal}\textbf{Validation Set:} \color{black}2013 \newline
+  \item \color{teal}\textbf{Test Set:} \color{black}2014 \newline \newline \newline \newline \newline
+\end{itemize}
+\end{block}
+\end{textblock}
+
+\begin{textblock}{14.6}(0.7, 6.5)
+\fontsize{11}{12}\sf
+\begin{alertblock}{}
+$$
+  \textbf{Deaths} = \beta_{0} + \sum_{j = 1}^{p}{g_{j}(\mathbfit{X}\mathbfit{\alpha}_{j})} + f_{1}(\textbf{DOS}) + f_{2}(\textbf{Year})+ \mathbfit{\varepsilon},
+$$
+\end{alertblock}
+\end{textblock}
+
+## Results
+
+\fontsize{10}{12}\sf
+```{r}
+#| echo: false
+results_heat <- readr::read_csv("results/heat_results_correct.csv")
+kable(results_heat,
+    format = "latex",
+    booktabs = TRUE,
+    digits = 3,
+    escape = FALSE,
+    linesep = "",
+    col.names = c("Model", "Predictors", "Indices", "MSE", "MAE", "MSE", "MAE")
+  ) |>
+  add_header_above(c("", "", "", "Test Set 1" = 2, "Test Set 2" = 2), align = "c") |>
+  kable_styling(latex_options = c("repeat_header")) |>
+  row_spec(0, align = "c") |>
+  column_spec(4, bold = if_else(results_heat$MSE1 == min(results_heat$MSE1), TRUE, FALSE)) |>
+  column_spec(5, bold = if_else(results_heat$MAE1 == min(results_heat$MAE1), TRUE, FALSE)) |>
+  column_spec(6, bold = if_else(results_heat$MSE2 == min(results_heat$MSE2), TRUE, FALSE)) |>
+  column_spec(7, bold = if_else(results_heat$MAE2 == min(results_heat$MAE2), TRUE, FALSE))
+```
+
+\begin{textblock}{14}(1, 7)
+\fontsize{11}{12}\sf
+\begin{block}{}
+\begin{itemize}
+  \item \color{violet} \textbf{Test Set 1:} \color{black} Three months (June, July and August 2014)
+  \item \color{violet} \textbf{Test Set 2:} \color{black} One month (June 2014)
+\end{itemize}
+\end{block}
+\end{textblock}
+
+
 ## Forecasting Solar Intensity
+
+\begin{textblock}{7}(0.7, 1)
+\fontsize{11}{12}\sf
+\begin{block}{Variables}
+  \begin{itemize}
+    \item \color{teal} \textbf{Response:} \color{black} \textbf{Daily solar intensity} -- February 2006 to February 2013 -- Amherst, Massachusetts
+    \item \color{teal} \textbf{Index Variables:} 
+      \begin{itemize}
+        \item \color{black} Solar intensity lags
+        \item \color{black} Temperature, dew point, wind speed, rain and humidity lags
+      \end{itemize}
+    \item \color{teal}\textbf{Linear:} \color{black} DOY fourier terms \newline
+  \end{itemize}
+\end{block}
+\end{textblock}
+
+\begin{textblock}{7}(8.3, 1)
+\fontsize{11}{12}\sf
+\begin{block}{Data Split}
+  \begin{itemize}
+  \item \color{teal}\textbf{Training Set:} \color{black} February 2006 to October 2012\newline
+  \item \color{teal}\textbf{Validation Set:} \color{black} November and December 2012  \newline
+  \item \color{teal}\textbf{Test Set:} \color{black} January and February 2013 \newline \newline
+\end{itemize}
+\end{block}
+\end{textblock}
+
+\begin{textblock}{14.6}(0.7, 6.5)
+\fontsize{11}{12}\sf
+\begin{alertblock}{}
+$$
+  \textbf{Solar} = \beta_{0} + \sum_{j = 1}^{p}{g_{j}(\mathbfit{X}\mathbfit{\alpha}_{j})} + \sum_{k = 1}^{8}(\theta_{k}\textbf{DOY}\_\textbf{S}_{\mathbfit{k}} + \delta_{k}\textbf{DOY}\_\textbf{C}_{\mathbfit{k}}) + \mathbfit{\varepsilon},
+$$
+\end{alertblock}
+\end{textblock}
+
+
+## Results
+
+\fontsize{12}{12}\sf
+```{r}
+#| echo: false
+results_solar <- readr::read_csv("results/solar_results_fourier8.csv")
+kable(results_solar,
+  format = "latex",
+  booktabs = TRUE,
+  digits = 3,
+  linesep = "",
+  escape = FALSE,
+  col.names = c("Model", "Predictors", "Indices", "MSE", "MAE")
+) |>
+  add_header_above(c("", "", "", "Test Set" = 2), align = "c") |>
+  kable_styling(latex_options = c("repeat_header")) |>
+  row_spec(0, align = "c") |>
+  column_spec(4, bold = if_else(results_solar$MSE == min(results_solar$MSE), TRUE, FALSE)) |>
+  column_spec(5, bold = if_else(results_solar$MAE == min(results_solar$MAE), TRUE, FALSE))
+```
+
 
 # Conclusion
