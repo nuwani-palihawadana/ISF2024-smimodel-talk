@@ -498,3 +498,27 @@ kable(results_solar,
 
 
 # Conclusion
+
+## Conclusion
+
+::: {.callout-tip}
+## \color{violet} \textbf{Key features:}
+
+\begin{itemize}
+    \item Automatic selection of number of indices and predictor grouping
+    \item Automatic predictor selection
+    \item A wide spectrum: from single index models to additive models
+    \item Flexibility to include separate nonlinear and linear predictors
+  \end{itemize}
+:::
+
+\pause
+::: {.callout-warning}
+## \color{violet} Things to improve:
+
+\begin{itemize}
+    \item \small Initialisation: we encourage trial-and-error
+    \item \small Applicability: more applications are needed
+    \item \small Computational time: increases with number of predictors and indices
+  \end{itemize}
+:::
