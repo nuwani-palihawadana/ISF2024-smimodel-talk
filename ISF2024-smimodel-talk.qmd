@@ -260,15 +260,15 @@ $$
 ## Estimation Algorithm
 
 \begin{block}{}
-\color{blue} \textbf{Step 1 :} \color{black} Initialise Index Structure and Index Coefficients
+\color{blue} \textbf{Step 1 :} \color{black} Initialise index structure and index coefficients
 \end{block}
 \pause
 \begin{block}{}
-\color{violet} \textbf{Step 2 :} \color{black} Estimate Nonlinear Functions
+\color{violet} \textbf{Step 2 :} \color{black} Estimate nonlinear functions
 \end{block}
 \pause
 \begin{block}{}
-\color{blue} \textbf{Step 3 :} \color{black} Update Index Coefficients
+\color{blue} \textbf{Step 3 :} \color{black} Update index coefficients
 \end{block}
 \pause
 \begin{block}{}
