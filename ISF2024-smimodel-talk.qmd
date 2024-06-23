@@ -175,17 +175,49 @@ $$y_{i} = \beta_{0} + \sum_{j = 1}^{p}g_{j}(\mathbfit{\alpha}_{j}^{T}\mathbfit{x
 \end{block}
 
 \begin{itemize}
-  \item \color{black} $y_{i}$ : \color{violet} univariate response
-  \item \color{black} $\mathbfit{x}_{ij} \in \mathbb{R}^{\ell_{j}}$, $j = 1, \dots, p$ : \color{violet} $p$ subsets of predictors entering indices
-  \item \color{black} $\mathbfit{\alpha}_{j}$ : \color{violet} $\ell_{j}$-dimensional vectors of index coefficients
-  \pause
-  \item \color{black} Additional predictors :
+  \item \small \color{black} $y_{i}$ -- \color{violet} univariate response
+  \item \small \color{black} $\mathbfit{x}_{ij} \in \mathbb{R}^{\ell_{j}}$, $j = 1, \dots, p$ -- \color{violet} $p$ subsets of predictors entering indices
+  \item \small \color{black} $\mathbfit{\alpha}_{j}$ -- \color{violet} $\ell_{j}$-dimensional vectors of index coefficients
+  \item \small \color{black} $g_{j}, f_{k}$ -- \color{violet} smooth nonlinear functions
+  \item \small \color{black} Additional predictors :
     \begin{itemize}
-      \item $w_{ik}$  --   \color{violet} nonlinear 
-      \item \color{black} $\mathbfit{u}_{i}$  --   \color{violet} linear
+      \item \small $w_{ik}$  --   \color{violet} nonlinear 
+      \item \small \color{black} $\mathbfit{u}_{i}$  --   \color{violet} linear
     \end{itemize}
-  \item \color{black} $g_{j}, f_{k}$ : \color{violet} smooth nonlinear functions
 \end{itemize}
+
+
+## SMI Model
+
+\begin{block}{Semi-parametric model}
+$$y_{i} = \beta_{0} + \sum_{j = 1}^{p}g_{j}(\mathbfit{\alpha}_{j}^{T}\mathbfit{x}_{ij}) + \sum_{k = 1}^{d}f_{k}(w_{ik}) + \mathbfit{\theta}^{T}\mathbfit{u}_{i} + \varepsilon_{i}, \quad i = 1, \dots, n,$$
+\end{block}
+
+\begin{itemize}
+  \item \small \color{black} $y_{i}$ -- \color{violet} univariate response
+  \item \small \color{black} $\mathbfit{x}_{ij} \in \mathbb{R}^{\ell_{j}}$, $j = 1, \dots, p$ -- \color{violet} $p$ subsets of predictors entering indices
+  \item \small \color{black} $\mathbfit{\alpha}_{j}$ -- \color{violet} $\ell_{j}$-dimensional vectors of index coefficients
+  \item \small \color{black} $g_{j}, f_{k}$ -- \color{violet} smooth nonlinear functions
+  \item \small \color{black} Additional predictors :
+    \begin{itemize}
+      \item \small $w_{ik}$  --   \color{violet} nonlinear 
+      \item \small \color{black} $\mathbfit{u}_{i}$  --   \color{violet} linear
+    \end{itemize}
+\end{itemize}
+
+\begin{textblock}{5.5}(9, 6)
+\fontsize{11}{12}\sf
+\begin{alertblock}{}
+\scriptsize Both "p" and the predictor grouping among indices are unknown.
+\end{alertblock}
+\end{textblock} 
+
+\begin{textblock}{5.5}(9, 7)
+\fontsize{11}{12}\sf
+\begin{alertblock}{}
+\scriptsize Overlapping of predictors among indices is not allowed.
+\end{alertblock}
+\end{textblock} 
 
 
 ## Optimisation Problem
@@ -250,6 +282,59 @@ $$
 \begin{block}{}
 \color{violet} \textbf{Step 6 :} \color{black} Increase p by 1 in each iteration of step 5
 \end{block}
+
+
+## Forecasting Heat Exposure Related Mortality
+
+\begin{textblock}{7}(0.7, 1)
+\fontsize{11}{12}\sf
+\begin{block}{Variables}
+  \begin{itemize}
+    \item \color{violet} \textbf{Response:} \color{black} \textbf{Daily deaths in Summer} -- 1990 to 2014 -- Montreal, Canada
+    \item \color{violet} \textbf{Index Variables:} 
+      \begin{itemize}
+        \item \color{black} Death lags
+        \item \color{black} Max temperature lags
+        \item \color{black} Min temperature lags
+        \item \color{black} Vapor pressure lags
+      \end{itemize}
+    \item \color{violet}\textbf{Nonlinear:} \color{black} DOS, Year \newline
+  \end{itemize}
+\end{block}
+\end{textblock}
+
+
+# Empirical Applications
+
+## Forecasting Heat Exposure Related Mortality
+
+\begin{textblock}{7}(0.7, 1)
+\fontsize{11}{12}\sf
+\begin{block}{Variables}
+  \begin{itemize}
+    \item \color{violet} \textbf{Response:} \color{black} \textbf{Daily deaths in Summer} -- 1990 to 2014 -- Montreal, Canada
+    \item \color{violet} \textbf{Index Variables:} 
+      \begin{itemize}
+        \item \color{black} Death lags
+        \item \color{black} Max temperature lags
+        \item \color{black} Min temperature lags
+        \item \color{black} Vapor pressure lags
+      \end{itemize}
+    \item \color{violet}\textbf{Nonlinear:} \color{black} DOS, Year \newline
+  \end{itemize}
+\end{block}
+\end{textblock}
+
+\begin{textblock}{7}(8.3, 1)
+\fontsize{11}{12}\sf
+\begin{block}{Data Split}
+  \begin{itemize}
+  \item \color{violet}\textbf{Training Set:} \color{black}1990 to 2012 \newline
+  \item \color{violet}\textbf{Validation Set:} \color{black}2013 \newline
+  \item \color{violet}\textbf{Test Set:} \color{black}2014 \newline \newline \newline \newline \newline
+\end{itemize}
+\end{block}
+\end{textblock}
 
 
 # Empirical Applications
