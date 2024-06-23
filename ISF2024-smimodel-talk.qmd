@@ -276,11 +276,11 @@ $$
 \end{block}
 \pause
 \begin{block}{}
-\color{blue} \textbf{Step 5 :} \color{black} Stop or repeat step 4
+\color{blue} \textbf{Step 5 :} \color{black} Add a new index with dropped predictors, and repeat step 4
 \end{block}
 \pause 
 \begin{block}{}
-\color{violet} \textbf{Step 6 :} \color{black} Increase p by 1 in each iteration of step 5
+\color{violet} \textbf{Step 6 :} \color{black} Increase p by 1 in each iteration of step 5  until reaching termination criteria
 \end{block}
 
 
