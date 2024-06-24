@@ -260,48 +260,46 @@ $$
 ## Estimation Algorithm
 
 \begin{block}{}
+\fontsize{9}{9}\sf
 \color{blue} \textbf{Step 1 :} \color{black} Initialise index structure and index coefficients
 \end{block}
 \pause
 \begin{block}{}
+\fontsize{9}{9}\sf
 \color{violet} \textbf{Step 2 :} \color{black} Estimate nonlinear functions
 \end{block}
 \pause
 \begin{block}{}
+\fontsize{9}{9}\sf
 \color{blue} \textbf{Step 3 :} \color{black} Update index coefficients
 \end{block}
 \pause
 \begin{block}{}
-\color{violet} \textbf{Step 4 :} \color{black} Iterate steps 2 and 3
+\fontsize{9}{9}\sf
+\color{violet} \textbf{Step 4 :} \color{black} Iterate steps 2 and 3 -- until:
+\fontsize{8}{8}\sf
+\begin{itemize}
+  \item \color{violet} convergence
+  \item \color{violet} loss increases for 3 consecutive iterations \color{black} OR
+  \item \color{violet} max iterations
+\end{itemize}
 \end{block}
 \pause
 \begin{block}{}
+\fontsize{9}{9}\sf
 \color{blue} \textbf{Step 5 :} \color{black} Add a new index with dropped predictors, and repeat step 4
 \end{block}
 \pause 
 \begin{block}{}
-\color{violet} \textbf{Step 6 :} \color{black} Increase p by 1 in each iteration of step 5  until reaching termination criteria
+\fontsize{9}{9}\sf
+\color{violet} \textbf{Step 6 :} \color{black} Increase p by 1 in each iteration of step 5 -- until:
+\fontsize{8}{8}\sf
+\begin{itemize}
+  \item \color{violet} no.of indices reaches $q$
+  \item \color{violet} loss increases after the increment model \color{black} OR 
+  \item \color{violet} solution maintains same no.of indices as previous iteration, and abs(difference of index coefficients between two successive iterations) $<=$ tolerance
+\end{itemize}
 \end{block}
-
-
-## Forecasting Heat Exposure Related Mortality
-
-\begin{textblock}{7}(0.7, 1)
-\fontsize{11}{12}\sf
-\begin{block}{Variables}
-  \begin{itemize}
-    \item \color{violet} \textbf{Response:} \color{black} \textbf{Daily deaths in Summer} -- 1990 to 2014 -- Montreal, Canada
-    \item \color{violet} \textbf{Index Variables:} 
-      \begin{itemize}
-        \item \color{black} Death lags
-        \item \color{black} Max temperature lags
-        \item \color{black} Min temperature lags
-        \item \color{black} Vapor pressure lags
-      \end{itemize}
-    \item \color{violet}\textbf{Nonlinear:} \color{black} DOS, Year \newline
-  \end{itemize}
-\end{block}
-\end{textblock}
 
 
 # Empirical Applications
@@ -320,24 +318,11 @@ $$
         \item \color{black} Min temperature lags
         \item \color{black} Vapor pressure lags
       \end{itemize}
-    \item \color{violet}\textbf{Nonlinear:} \color{black} DOS, Year \newline
+    \item \color{violet}\textbf{Nonlinear:} \color{black} DOS (day of the season), Year \newline
   \end{itemize}
 \end{block}
 \end{textblock}
 
-\begin{textblock}{7}(8.3, 1)
-\fontsize{11}{12}\sf
-\begin{block}{Data Split}
-  \begin{itemize}
-  \item \color{violet}\textbf{Training Set:} \color{black}1990 to 2012 \newline
-  \item \color{violet}\textbf{Validation Set:} \color{black}2013 \newline
-  \item \color{violet}\textbf{Test Set:} \color{black}2014 \newline \newline \newline \newline \newline
-\end{itemize}
-\end{block}
-\end{textblock}
-
-
-# Empirical Applications
 
 ## Forecasting Heat Exposure Related Mortality
 
@@ -353,7 +338,7 @@ $$
         \item \color{black} Min temperature lags
         \item \color{black} Vapor pressure lags
       \end{itemize}
-    \item \color{violet}\textbf{Nonlinear:} \color{black} DOS, Year \newline
+    \item \color{violet}\textbf{Nonlinear:} \color{black} DOS (day of the season), Year \newline
   \end{itemize}
 \end{block}
 \end{textblock}
@@ -364,12 +349,43 @@ $$
   \begin{itemize}
   \item \color{violet}\textbf{Training Set:} \color{black}1990 to 2012 \newline
   \item \color{violet}\textbf{Validation Set:} \color{black}2013 \newline
-  \item \color{violet}\textbf{Test Set:} \color{black}2014 \newline \newline \newline \newline \newline
+  \item \color{violet}\textbf{Test Set:} \color{black}2014 \newline \newline \newline \newline \newline \newline
 \end{itemize}
 \end{block}
 \end{textblock}
 
-\begin{textblock}{14.6}(0.7, 6.5)
+
+## Forecasting Heat Exposure Related Mortality
+
+\begin{textblock}{7}(0.7, 1)
+\fontsize{11}{12}\sf
+\begin{block}{Variables}
+  \begin{itemize}
+    \item \color{violet} \textbf{Response:} \color{black} \textbf{Daily deaths in Summer} -- 1990 to 2014 -- Montreal, Canada
+    \item \color{violet} \textbf{Index Variables:} 
+      \begin{itemize}
+        \item \color{black} Death lags
+        \item \color{black} Max temperature lags
+        \item \color{black} Min temperature lags
+        \item \color{black} Vapor pressure lags
+      \end{itemize}
+    \item \color{violet}\textbf{Nonlinear:} \color{black} DOS (day of the season), Year \newline
+  \end{itemize}
+\end{block}
+\end{textblock}
+
+\begin{textblock}{7}(8.3, 1)
+\fontsize{11}{12}\sf
+\begin{block}{Data Split}
+  \begin{itemize}
+  \item \color{violet}\textbf{Training Set:} \color{black}1990 to 2012 \newline
+  \item \color{violet}\textbf{Validation Set:} \color{black}2013 \newline
+  \item \color{violet}\textbf{Test Set:} \color{black}2014 \newline \newline \newline \newline \newline \newline
+\end{itemize}
+\end{block}
+\end{textblock}
+
+\begin{textblock}{14.6}(0.7, 6.8)
 \fontsize{11}{12}\sf
 \begin{alertblock}{}
 $$
@@ -378,9 +394,10 @@ $$
 \end{alertblock}
 \end{textblock}
 
+
 ## Results
 
-\fontsize{10}{12}\sf
+\fontsize{9}{12}\sf
 ```{r}
 #| echo: false
 results_heat <- readr::read_csv("results/heat_results_correct.csv")
@@ -401,8 +418,13 @@ kable(results_heat,
   column_spec(7, bold = if_else(results_heat$MAE2 == min(results_heat$MAE2), TRUE, FALSE))
 ```
 
-\begin{textblock}{14}(1, 7)
-\fontsize{11}{12}\sf
+\begin{textblock}{14}(1, 6.2)
+\fontsize{10}{12}\sf
+  \alert{SMI Model (a, b) $\quad \mathbfit{\rightarrow \quad \lambda_{0} = a, \lambda_{2} = b}$}
+\end{textblock}
+
+\begin{textblock}{14}(1, 7.2)
+\fontsize{10}{12}\sf
 \begin{block}{}
 \begin{itemize}
   \item \color{violet} \textbf{Test Set 1:} \color{black} Three months (June, July and August 2014)
