@@ -11,7 +11,7 @@ format:
     template-partials:
         - before-title.tex
 execute:
-  cache: false
+  cache: true
   echo: true
   warning: false
   message: false
@@ -28,68 +28,63 @@ library(tsibble)
 library(lubridate)
 library(cowplot)
 library(kableExtra)
+library(feasts)
 ```
 
 
 # Motivation
 
-## Daily Mortality Data
+## Heat Exposure Related Daily Mortality
 ```{r}
-#| label: heat-full-plot
+#| label: heat-summer-plot
 #| echo: false
 #| message: false
 
-dataHeat <- readRDS(here::here("data/Heat_Data_Full.rds"))
-dataHeat |>
-  mutate(Date = as.POSIXct(Date)) |>
-  ggplot(aes(x = Date, y = Death_lag_000)) +
-  geom_line(colour = "#D55E00") +
-  scale_x_datetime(date_breaks = "3 year") +
-  labs(x = "Date", y = "Number of Deaths", title = "Daily Deaths in Montreal, Canada") +
-  theme_bw()
+dataSummer <- readRDS(here::here("data/Heat_Corrected.rds"))
+dataSummer |>
+  as_tsibble(index = Date) |>
+  mutate(Day = row_number()) |>
+  update_tsibble(index = Day, regular = TRUE) |>
+  autoplot(Death_lag_000, colour = "#D55E00") +
+  scale_x_continuous(
+    breaks = seq(1, 2300, by = 92),
+    labels = unique(dataSummer$Year)
+  ) +
+  labs(x = "Date", y = "Number of Deaths", title = "Daily Deaths in Summer - Montreal, Canada") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 12, size = 7))
 ```
 
 
-## Daily Mortality Data
+## Heat Exposure Related Daily Mortality
 ```{r}
 #| label: heat-small-plot
 #| echo: false
 #| message: false
 
-p1 <- dataHeat |>
-  mutate(Date = as.POSIXct(Date)) |>
+dataSummer |>
+  as_tsibble(index = Date) |>
   filter(Date <= "1992-12-31") |>
-  ggplot(aes(x = Date, y = Death_lag_000)) +
-  geom_line(colour = "#D55E00") +
-  scale_x_datetime(date_breaks = "6 months") +
-  labs(x = "Date", y = "Number of Deaths", title = "Daily Deaths - 1990 to 1992") +
+  mutate(Day = row_number()) |>
+  update_tsibble(index = Day, regular = TRUE) |>
+  autoplot(Death_lag_000, colour = "#D55E00") +
+  scale_x_continuous(
+    breaks = seq(1, 2300, by = 92),
+    labels = unique(dataSummer$Year)
+  ) +
+  labs(x = "Date", y = "Number of Deaths", title = "Daily Deaths in Summer - 1990 to 1992") +
   theme_bw() +
   theme(axis.text.x = element_text(angle = 12, size = 7))
-
-p2 <- dataHeat |>
-  mutate(Date = as.POSIXct(Date)) |>
-  filter(Date <= "1990-12-31") |>
-  ggplot(aes(x = Date, y = Death_lag_000)) +
-  geom_line(colour = "#D55E00") +
-  scale_x_datetime(date_breaks = "2 months") +
-  labs(x = "Date", y = "Number of Deaths", title = "Daily Deaths - 1990") +
-  theme_bw() +
-  theme(axis.text.x = element_text(angle = 12, size = 7))  +
-  geom_smooth(colour = "black", se = FALSE, size = 0.4)
-
-plot_grid(p1, p2, nrow=1)
 ```
 
 
-## Daily Mortality Data
+## Heat Exposure Related Daily Mortality
 ```{r}
 #| label: temp-heat-plot
 #| echo: false
 #| message: false
 
-dataSummer <- readRDS(here::here("data/Heat_Corrected.rds"))
-
-p3 <- dataSummer |>
+p1 <- dataSummer |>
   ggplot(aes(x = Tmax_lag_000, y = Death_lag_000)) +
   geom_point(colour = "#CC79A7", alpha = 0.3) +
   xlim(c(0, 35)) +
@@ -101,7 +96,7 @@ p3 <- dataSummer |>
   theme_bw() +
   geom_smooth(colour = "black", se = FALSE, size = 0.4)
 
-p4 <- dataSummer |>
+p2 <- dataSummer |>
   ggplot(aes(x = Tmin_lag_000, y = Death_lag_000)) +
   geom_point(colour = "#CC79A7", , alpha = 0.3) +
   xlim(c(0, 35)) +
@@ -113,7 +108,7 @@ p4 <- dataSummer |>
   theme_bw() +
   geom_smooth(colour = "black", se = FALSE, size = 0.4)
 
-plot_grid(p3, p4, nrow=1)
+plot_grid(p1, p2, nrow=1)
 ```
 
 
@@ -154,7 +149,17 @@ $\varepsilon_{t}$ -- random error
 \end{enumerate}
 :::
 
-\pause
+
+## Background
+
+::: {.callout-warning}
+## \color{violet} \textbf{Issues:}
+
+\begin{enumerate}
+  \item Challenging to estimate in a high-dimensional setting \newline
+  \item Subjectivity in predictor selection, and predictor grouping to model interactions
+\end{enumerate}
+:::
 
 ::: {.callout-note}
 ## \color{violet} \textbf{Index Models:}
@@ -163,6 +168,15 @@ $\varepsilon_{t}$ -- random error
     \item \textbf{Mitigate difficulty of estimating a nonparametric component for each predictor}
     \item \textbf{Improve flexibility}
 \end{itemize}
+\begin{textblock}{6}(8.5, 7)
+\fontsize{12}{12}\sf
+\begin{block}{}
+\color{violet}
+$$
+  y_{i} = g \left ( \mathbfit{\alpha}^{T} \mathbfit{x}_{i} \right ) + \varepsilon_{i}
+$$
+\end{block}
+\end{textblock}
 :::
 
 
