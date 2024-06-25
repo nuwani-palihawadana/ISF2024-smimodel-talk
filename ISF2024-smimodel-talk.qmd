@@ -344,7 +344,7 @@ $$
 
 # Empirical Applications
 
-## Forecasting Heat Exposure Related Mortality
+## Forecasting Heat Exposure Related Daily Mortality
 
 \begin{textblock}{7}(0.7, 1)
 \fontsize{11}{12}\sf
@@ -364,7 +364,7 @@ $$
 \end{textblock}
 
 
-## Forecasting Heat Exposure Related Mortality
+## Forecasting Heat Exposure Related Daily Mortality
 
 \begin{textblock}{7}(0.7, 1)
 \fontsize{11}{12}\sf
@@ -395,7 +395,7 @@ $$
 \end{textblock}
 
 
-## Forecasting Heat Exposure Related Mortality
+## Forecasting Heat Exposure Related Daily Mortality
 
 \begin{textblock}{7}(0.7, 1)
 \fontsize{11}{12}\sf
