@@ -305,6 +305,23 @@ $$
 \end{block}
 \pause
 \begin{block}{}
+\fontsize{8}{8}\sf
+  \begin{itemize}
+    \item \color{violet} \textbf{PPR:} Projection Pursuit Regression Based Initialisation
+    \item \color{violet} \textbf{Additive:} Nonparametric Additive Model Based Initialisation
+    \item \color{violet} \textbf{Linear:} Linear Regression Based Initialisation
+    \item \color{violet} \textbf{Multiple:} Pick One From Multiple Initialisations
+  \end{itemize}
+\end{block}
+
+
+## Estimation Algorithm
+
+\begin{block}{}
+\fontsize{9}{9}\sf
+\color{blue} \textbf{Step 1 :} \color{black} Initialise index structure and index coefficients
+\end{block}
+\begin{block}{}
 \fontsize{9}{9}\sf
 \color{violet} \textbf{Step 2 :} \color{black} Estimate nonlinear functions
 \end{block}
@@ -317,6 +334,9 @@ $$
 \begin{block}{}
 \fontsize{9}{9}\sf
 \color{violet} \textbf{Step 4 :} \color{black} Iterate steps 2 and 3 -- until:
+\end{block}
+\pause
+\begin{block}{}
 \fontsize{8}{8}\sf
 \begin{itemize}
   \item \color{violet} convergence
@@ -324,7 +344,26 @@ $$
   \item \color{violet} max iterations
 \end{itemize}
 \end{block}
-\pause
+
+
+## Estimation Algorithm
+
+\begin{block}{}
+\fontsize{9}{9}\sf
+\color{blue} \textbf{Step 1 :} \color{black} Initialise index structure and index coefficients
+\end{block}
+\begin{block}{}
+\fontsize{9}{9}\sf
+\color{violet} \textbf{Step 2 :} \color{black} Estimate nonlinear functions
+\end{block}
+\begin{block}{}
+\fontsize{9}{9}\sf
+\color{blue} \textbf{Step 3 :} \color{black} Update index coefficients
+\end{block}
+\begin{block}{}
+\fontsize{9}{9}\sf
+\color{violet} \textbf{Step 4 :} \color{black} Iterate steps 2 and 3 until stopping criteria are reached
+\end{block}
 \begin{block}{}
 \fontsize{9}{9}\sf
 \color{blue} \textbf{Step 5 :} \color{black} Add a new index with dropped predictors, and repeat step 4
@@ -333,6 +372,9 @@ $$
 \begin{block}{}
 \fontsize{9}{9}\sf
 \color{violet} \textbf{Step 6 :} \color{black} Increase p by 1 in each iteration of step 5 -- until:
+\end{block}
+\pause 
+\begin{block}{}
 \fontsize{8}{8}\sf
 \begin{itemize}
   \item \color{violet} no.of indices reaches $q$
@@ -440,7 +482,7 @@ $$
 \fontsize{9}{12}\sf
 ```{r}
 #| echo: false
-results_heat <- readr::read_csv("results/heat_results_correct.csv")
+results_heat <- readr::read_csv(here::here("results/heat_results_correct.csv"))
 kable(results_heat,
     format = "latex",
     booktabs = TRUE,
