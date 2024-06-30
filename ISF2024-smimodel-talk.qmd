@@ -58,28 +58,6 @@ dataSummer |>
 
 ## Heat Exposure Related Daily Mortality
 ```{r}
-#| label: heat-small-plot
-#| echo: false
-#| message: false
-
-dataSummer |>
-  as_tsibble(index = Date) |>
-  filter(Date <= "1992-12-31") |>
-  mutate(Day = row_number()) |>
-  update_tsibble(index = Day, regular = TRUE) |>
-  autoplot(Death_lag_000, colour = "#D55E00") +
-  scale_x_continuous(
-    breaks = seq(1, 2300, by = 92),
-    labels = unique(dataSummer$Year)
-  ) +
-  labs(x = "Date", y = "Number of Deaths", title = "Daily Deaths in Summer - 1990 to 1992") +
-  theme_bw() +
-  theme(axis.text.x = element_text(angle = 12, size = 7))
-```
-
-
-## Heat Exposure Related Daily Mortality
-```{r}
 #| label: temp-heat-plot
 #| echo: false
 #| message: false
