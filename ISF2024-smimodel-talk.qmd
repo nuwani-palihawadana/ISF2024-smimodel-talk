@@ -403,15 +403,13 @@ $$
 \end{block}
 \end{textblock}
 
-\begin{textblock}{7}(8.3, 1)
+\begin{textblock}{14.6}(0.7, 6.8)
 \fontsize{11}{12}\sf
-\begin{block}{Data Split}
-  \begin{itemize}
-  \item \color{violet}\textbf{Training Set:} \color{black}1990 to 2012 \newline
-  \item \color{violet}\textbf{Validation Set:} \color{black}2013 \newline
-  \item \color{violet}\textbf{Test Set:} \color{black}2014 \newline \newline \newline \newline \newline \newline
-\end{itemize}
-\end{block}
+\begin{alertblock}{}
+$$
+  \textbf{Deaths} = \beta_{0} + \sum_{j = 1}^{p}{g_{j}(\mathbfit{X}\mathbfit{\alpha}_{j})} + f_{1}(\textbf{DOS}) + f_{2}(\textbf{Year})+ \mathbfit{\varepsilon},
+$$
+\end{alertblock}
 \end{textblock}
 
 
@@ -508,8 +506,6 @@ kable(results_heat,
     \item Flexibility to include separate nonlinear and linear predictors
   \end{itemize}
 :::
-
-\pause
 
 ::: {.callout-warning}
 ## \color{violet} Things to improve:
